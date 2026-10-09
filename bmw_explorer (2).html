@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080b10">
+  <meta name="description" content="Explore BMW models with model-specific photo references, specifications, performance, and electric mobility.">
+  <meta name="color-scheme" content="dark">
+  <title>BMW | The Ultimate Driving Machine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{--bg:#080b10;--panel:#10151d;--panel2:#151c26;--line:#28313d;--muted:#9ba8b8;--blue:#1684ff;--blue2:#70b6ff}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:#f5f7fa;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    .glass{background:rgba(9,13,20,.78);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.08)}
+    .hero{position:relative;isolation:isolate;min-height:650px;background:#0a1018;overflow:hidden}
+    .hero:before{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(90deg,rgba(5,8,13,.94) 0%,rgba(5,8,13,.68) 42%,rgba(5,8,13,.08) 100%),url('https://upload.wikimedia.org/wikipedia/commons/1/16/BMW_G80_M3_Competition_M_xDrive_Black_Sapphire_Metallic_%282%29.jpg') center 55%/cover no-repeat}
+    .hero:after{content:"";position:absolute;inset:auto 0 0;height:160px;z-index:-1;background:linear-gradient(transparent,var(--bg))}
+    .eyebrow{letter-spacing:.24em;text-transform:uppercase;color:var(--blue2);font-size:.72rem;font-weight:800}
+    .blue-btn{background:var(--blue);color:white;transition:transform .2s,background .2s}.blue-btn:hover{background:#006fe8;transform:translateY(-1px)}
+    .outline-btn{border:1px solid #5d6b7b;background:rgba(255,255,255,.03);transition:all .2s}.outline-btn:hover{border-color:#8ec7ff;background:rgba(22,132,255,.12)}
+    .field{width:100%;background:#0b1017;border:1px solid #2c3745;border-radius:10px;color:#f5f7fa;padding:12px 14px;outline:none}
+    .field:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(22,132,255,.15)}
+    .car-card{background:linear-gradient(150deg,#151c26,#0e131b);border:1px solid #242e3a;border-radius:16px;overflow:hidden;transition:transform .22s,border-color .22s,box-shadow .22s}
+    .car-card:hover{transform:translateY(-5px);border-color:#3c6e9e;box-shadow:0 18px 45px #0005}
+    .car-image{height:210px;position:relative;background:#151c26;overflow:hidden}
+    .car-image img{width:100%;height:100%;object-fit:cover;transition:transform .5s;display:block}.car-card:hover .car-image img{transform:scale(1.045)}
+    .car-image-fallback{height:100%;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:20px;background:radial-gradient(ellipse at 50% 30%,#203348 0%,#111923 52%,#090d13 100%);color:#eaf2fb}.car-image-fallback span{font-size:.68rem;font-weight:800;letter-spacing:.25em;color:#7fbeff}.car-image-fallback strong{font-size:1.05rem}.car-image-fallback small{font-size:.75rem;color:#91a0b2}
+    .pill{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;border:1px solid #344253;border-radius:999px;padding:5px 9px;color:#c7d3df}
+    .stat{border-top:1px solid #2b3542;padding-top:12px}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.76);backdrop-filter:blur(8px);z-index:80;display:none;overflow-y:auto;padding:24px}
+    .modal-backdrop.open{display:flex;align-items:center;justify-content:center}
+    .modal{width:min(960px,100%);background:#10151d;border:1px solid #303b49;border-radius:20px;overflow:hidden;box-shadow:0 30px 100px #000b}
+    .modal-image{width:100%;height:290px;object-fit:cover;display:block}
+    .filter-chip{padding:8px 13px;border:1px solid #2e3948;border-radius:999px;color:#aeb9c7;font-size:.82rem;white-space:nowrap}
+    .filter-chip.active{background:#12365a;border-color:#1684ff;color:white}
+    .section-rule{height:1px;background:linear-gradient(90deg,#1684ff,transparent)}
+    .bmw-roundel{width:32px;height:32px;border-radius:50%;border:3px solid #e8edf4;background:conic-gradient(#1684ff 0 25%,#f8fafc 0 50%,#1684ff 0 75%,#f8fafc 0);box-shadow:inset 0 0 0 3px #0a0d12;position:relative;flex:none}
+    .bmw-roundel:after{content:"";position:absolute;inset:8px;border-radius:50%;background:#0b1017;border:1px solid #e8edf4}
+    .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#182330;border:1px solid #344253;padding:12px 18px;border-radius:12px;z-index:100;display:none}
+    @media(max-width:640px){.hero{min-height:590px}.hero:before{background:linear-gradient(90deg,rgba(5,8,13,.9),rgba(5,8,13,.38)),url('https://upload.wikimedia.org/wikipedia/commons/1/16/BMW_G80_M3_Competition_M_xDrive_Black_Sapphire_Metallic_%282%29.jpg') 58% center/cover no-repeat}.modal-backdrop{padding:10px}.modal-image{height:210px}}
+  </style>
+</head>
+<body>
+  <header class="glass sticky top-0 z-50">
+    <nav class="max-w-7xl mx-auto px-5 lg:px-8 h-[76px] flex items-center justify-between gap-5" aria-label="Main navigation">
+      <a href="#home" class="flex items-center gap-3" aria-label="BMW Explorer home">
+        <span class="bmw-roundel" aria-hidden="true"></span>
+        <span class="font-black tracking-[.22em] text-sm sm:text-base">BMW <span class="text-slate-400 font-medium tracking-normal">EXPLORER</span></span>
+      </a>
+      <div class="hidden md:flex items-center gap-8 text-sm text-slate-300">
+        <a class="hover:text-white" href="#models">All models</a><a class="hover:text-white" href="#electric">Electric</a><a class="hover:text-white" href="#performance">M performance</a>
+      </div>
+      <a href="#models" class="blue-btn rounded-lg px-4 py-2.5 text-sm font-bold">Explore cars <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="hero flex items-center">
+      <div class="max-w-7xl mx-auto w-full px-5 lg:px-8 py-20">
+        <div class="max-w-2xl">
+          <p class="eyebrow mb-5">Sheer driving pleasure</p>
+          <h1 class="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-[-.055em] leading-[1.02] mb-6">Find the BMW<br><span class="text-blue-400">that moves you.</span></h1>
+          <p class="text-slate-300 text-base sm:text-lg leading-8 max-w-xl mb-9">From all-electric innovation to iconic M performance, explore the lineup built around the joy of driving.</p>
+          <div class="flex flex-wrap gap-3"><a class="blue-btn rounded-lg px-6 py-3.5 font-bold" href="#models">Discover the range <span aria-hidden="true">→</span></a><a class="outline-btn rounded-lg px-6 py-3.5 font-semibold" href="#electric">Explore electric</a></div>
+          <div class="grid grid-cols-3 gap-5 max-w-lg mt-12 pt-6 border-t border-white/15">
+            <div><div class="text-2xl font-bold">30+</div><div class="text-xs text-slate-400 mt-1">Models to explore</div></div>
+            <div><div class="text-2xl font-bold">0–100</div><div class="text-xs text-slate-400 mt-1">Performance focused</div></div>
+            <div><div class="text-2xl font-bold">100%</div><div class="text-xs text-slate-400 mt-1">Driving inspiration</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-5 lg:px-8 py-12">
+      <div class="grid md:grid-cols-3 gap-4">
+        <a href="#models" class="rounded-2xl p-6 border border-slate-800 bg-slate-900/60 hover:border-blue-500/70 transition">
+          <div class="eyebrow mb-3">01 / The range</div><h2 class="text-xl font-bold mb-2">Find your BMW</h2><p class="text-sm text-slate-400 leading-6">Browse sedans, coupes, roadsters, and versatile SAVs.</p>
+        </a>
+        <a id="electric" href="#models" data-preset="Electric" class="rounded-2xl p-6 border border-slate-800 bg-slate-900/60 hover:border-blue-500/70 transition">
+          <div class="eyebrow mb-3">02 / New energy</div><h2 class="text-xl font-bold mb-2">The electric era</h2><p class="text-sm text-slate-400 leading-6">Meet the i4, i5, i7, iX, and plug-in hybrid options.</p>
+        </a>
+        <a id="performance" href="#models" data-preset="M Performance" class="rounded-2xl p-6 border border-slate-800 bg-slate-900/60 hover:border-blue-500/70 transition">
+          <div class="eyebrow mb-3">03 / Motorsport DNA</div><h2 class="text-xl font-bold mb-2">M performance</h2><p class="text-sm text-slate-400 leading-6">Purposeful engineering, track-inspired response, and bold design.</p>
+        </a>
+      </div>
+    </section>
+
+    <section id="models" class="max-w-7xl mx-auto px-5 lg:px-8 py-12">
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-8">
+        <div><p class="eyebrow mb-3">The BMW collection</p><h2 class="text-3xl sm:text-4xl font-semibold tracking-tight">Explore all models</h2><p class="text-slate-400 mt-3 max-w-2xl">Compare the lineup and open any model for more details. Performance figures and price ranges are indicative examples; availability varies by market and model year.</p></div>
+        <div class="text-sm text-slate-400"><span id="resultCount" class="text-white font-bold">0</span> models shown</div>
+      </div>
+      <div class="rounded-2xl border border-slate-800 bg-[#0d1219] p-4 sm:p-5 mb-7">
+        <div class="grid md:grid-cols-[1.5fr_1fr_1fr] gap-3">
+          <label class="block"><span class="text-xs uppercase tracking-widest text-slate-400 block mb-2">Search models</span><input id="searchInput" class="field" type="search" placeholder="Try M3, iX, X5…" autocomplete="off"></label>
+          <label class="block"><span class="text-xs uppercase tracking-widest text-slate-400 block mb-2">Series</span><select id="seriesFilter" class="field"><option value="All">All series</option><option>1 Series</option><option>2 Series</option><option>3 Series</option><option>4 Series</option><option>5 Series</option><option>6 Series</option><option>7 Series</option><option>8 Series</option><option>X Series</option><option>Z Series</option><option>i Series</option><option>M Series</option></select></label>
+          <label class="block"><span class="text-xs uppercase tracking-widest text-slate-400 block mb-2">Body type</span><select id="bodyFilter" class="field"><option value="All">All body types</option><option>Sedan</option><option>SUV</option><option>Coupe</option><option>Convertible</option><option>Hatchback</option><option>Wagon</option><option>Gran Coupe</option></select></label>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-4">
+          <div class="flex flex-wrap gap-2" id="fuelChips" aria-label="Fuel type filter">
+            <button class="filter-chip active" data-fuel="All">All powertrains</button><button class="filter-chip" data-fuel="Petrol">Petrol</button><button class="filter-chip" data-fuel="Diesel">Diesel</button><button class="filter-chip" data-fuel="Electric">Electric</button><button class="filter-chip" data-fuel="Hybrid">Hybrid</button>
+          </div>
+          <button id="resetFilters" class="text-sm text-blue-300 hover:text-white underline underline-offset-4 self-start sm:self-auto">Reset filters</button>
+        </div>
+      </div>
+      <div id="carGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"></div>
+      <div id="emptyState" class="hidden text-center py-16 border border-dashed border-slate-700 rounded-2xl"><div class="text-3xl mb-3">⌕</div><h3 class="font-bold text-xl">No matching models</h3><p class="text-slate-400 mt-2">Try a different search or reset the filters.</p></div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-5 lg:px-8 py-14">
+      <div class="rounded-3xl overflow-hidden relative border border-slate-800 bg-[#0f1722]">
+        <div class="absolute inset-0 opacity-30" style="background:url('https://upload.wikimedia.org/wikipedia/commons/b/b2/BMW_iX_IAA_2021_1X7A0204.jpg') center/cover"></div>
+        <div class="relative p-8 sm:p-12 lg:p-16 max-w-3xl">
+          <p class="eyebrow mb-4">Electric, reimagined</p><h2 class="text-3xl sm:text-5xl font-semibold tracking-tight mb-5">A new kind of driving feeling.</h2><p class="text-slate-300 leading-7 mb-7">Discover BMW electric models that pair quiet, instant response with thoughtful technology and unmistakable design.</p><button class="blue-btn rounded-lg px-5 py-3 font-bold" id="showElectric">Browse electric models →</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-800 mt-10">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 py-8 flex flex-col sm:flex-row justify-between gap-4 text-sm text-slate-500">
+      <div class="flex items-center gap-3"><span class="bmw-roundel" aria-hidden="true"></span><span>BMW EXPLORER — An independent concept showcase.</span></div>
+      <p>Independent concept site, not affiliated with BMW AG. Photos load from Wikimedia Commons and automotive publisher image servers; image credits/licensing remain with each source. Specifications and prices are indicative.</p>
+    </div>
+  </footer>
+
+  <div id="detailModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div class="relative"><img id="modalImage" class="modal-image" src="" alt=""><button id="closeModal" class="absolute top-4 right-4 bg-black/70 hover:bg-black rounded-full w-10 h-10 text-xl" aria-label="Close details">×</button><div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#10151d] to-transparent"><span id="modalSeries" class="pill"></span><h2 id="modalTitle" class="text-3xl sm:text-4xl font-bold mt-3"></h2><p id="modalTagline" class="text-slate-300 mt-2"></p></div></div>
+      <div class="p-6 sm:p-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div class="stat"><div class="text-xs text-slate-400 uppercase tracking-widest">Power</div><div id="modalPower" class="text-xl font-bold mt-2"></div></div>
+          <div class="stat"><div class="text-xs text-slate-400 uppercase tracking-widest">0–100 km/h</div><div id="modalAccel" class="text-xl font-bold mt-2"></div></div>
+          <div class="stat"><div class="text-xs text-slate-400 uppercase tracking-widest">Top speed</div><div id="modalSpeed" class="text-xl font-bold mt-2"></div></div>
+          <div class="stat"><div class="text-xs text-slate-400 uppercase tracking-widest">Powertrain</div><div id="modalFuel" class="text-xl font-bold mt-2"></div></div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div><h3 class="font-bold text-lg mb-3">Overview</h3><p id="modalDescription" class="text-slate-300 leading-7"></p><h3 class="font-bold text-lg mt-6 mb-3">Exterior & interior</h3><p id="modalHighlights" class="text-slate-300 leading-7"></p></div>
+          <div class="rounded-xl border border-slate-800 bg-[#0b1017] p-5"><p class="eyebrow mb-3">Estimated pricing</p><div id="modalPrice" class="text-2xl font-bold mb-2"></div><p class="text-sm text-slate-400 leading-6">Indicative starting-price range only. Actual pricing depends on country, trim, options, taxes, and model year. Contact an authorized BMW retailer for a local quote.</p><div class="section-rule my-5"></div><p class="text-xs text-slate-500 leading-5">All figures shown are representative reference values and should be verified against the exact vehicle specification for your market.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+/*
+ * BMW Explorer demo catalog
+ * - Static front-end only: no database, dealer feed, or live pricing API.
+ * - Figures and prices are indicative reference values, not guaranteed specifications.
+ * - Images are served by Unsplash and require an internet connection.
+ */
+const cars = [
+ {name:"BMW 118i",series:"1 Series",body:"Hatchback",fuel:"Petrol",power:"136 hp",hp:136,accel:"8.5 s",speed:"213 km/h",engine:"1.5L turbo petrol, 3-cylinder",price:"$35,000–$42,000",desc:"A compact premium hatchback with agile handling, smart connectivity, and everyday versatility.",highlights:"Sculpted compact proportions, modern LED lighting, supportive sport seats, and an intuitive curved display.",tag:"Compact. Connected. Confident.",img:"https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW M135 xDrive",series:"M Series",body:"Hatchback",fuel:"Petrol",power:"300 hp",hp:300,accel:"4.9 s",speed:"250 km/h",engine:"2.0L turbo petrol, 4-cylinder",price:"$52,000–$60,000",desc:"A performance-focused hatchback blending everyday practicality with M-tuned dynamics.",highlights:"Aggressive front styling, athletic stance, M sport details, and a driver-oriented cockpit.",tag:"Everyday performance.",img:"https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW 220i Coupe",series:"2 Series",body:"Coupe",fuel:"Petrol",power:"184 hp",hp:184,accel:"7.5 s",speed:"236 km/h",engine:"2.0L turbo petrol, 4-cylinder",price:"$42,000–$50,000",desc:"A compact two-door coupe with rear-drive character and balanced proportions.",highlights:"Long bonnet, short rear deck, low seating position, and a clean cockpit with premium finishes.",tag:"Pure coupe character.",img:"https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW M2",series:"M Series",body:"Coupe",fuel:"Petrol",power:"453 hp",hp:453,accel:"4.1 s",speed:"250 km/h",engine:"3.0L twin-turbo inline-6",price:"$65,000–$75,000",desc:"A compact high-performance coupe engineered for precise, engaging driving.",highlights:"Wide stance, muscular wheel arches, M-specific controls, bolstered seats, and performance-focused detailing.",tag:"Small coupe. Big attitude.",img:"https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW 320i",series:"3 Series",body:"Sedan",fuel:"Petrol",power:"184 hp",hp:184,accel:"7.4 s",speed:"235 km/h",engine:"2.0L turbo petrol, 4-cylinder",price:"$45,000–$54,000",desc:"The benchmark sports sedan balances responsive handling with comfort and technology.",highlights:"Athletic sedan proportions, crisp LED lights, premium materials, and a wide digital display.",tag:"The original sports sedan.",img:"https://images.unsplash.com/photo-1523983388277-336a66bf9bcd?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW M3 Competition",series:"M Series",body:"Sedan",fuel:"Petrol",power:"503 hp",hp:503,accel:"3.9 s",speed:"250 km/h",engine:"3.0L twin-turbo inline-6",price:"$78,000–$90,000",desc:"A motorsport-bred sedan that delivers intense acceleration with four-door usability.",highlights:"Distinctive M front end, flared arches, carbon-fibre options, and deeply bolstered M seats.",tag:"Track focus. Four doors.",img:"https://images.unsplash.com/photo-1617531653332-bd46c24f2068?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW 330e",series:"3 Series",body:"Sedan",fuel:"Hybrid",power:"288 hp",hp:288,accel:"5.9 s",speed:"230 km/h",engine:"Plug-in hybrid, turbo petrol + electric motor",price:"$49,000–$58,000",desc:"A plug-in hybrid sedan that pairs electric commuting potential with long-distance flexibility.",highlights:"Sporty exterior details, refined cabin, digital driver displays, and selectable drive modes.",tag:"Electric miles. BMW feel.",img:"https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW 420i Gran Coupe",series:"4 Series",body:"Gran Coupe",fuel:"Petrol",power:"184 hp",hp:184,accel:"7.9 s",speed:"235 km/h",engine:"2.0L turbo petrol, 4-cylinder",price:"$49,000–$59,000",desc:"A sleek four-door with coupe-inspired lines and useful hatchback practicality.",highlights:"Sloping roofline, frameless-door styling, sculpted bodywork, and a premium digital cockpit.",tag:"Style meets versatility.",img:"https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW M4 Competition",series:"M Series",body:"Coupe",fuel:"Petrol",power:"503 hp",hp:503,accel:"3.9 s",speed:"250 km/h",engine:"3.0L twin-turbo inline-6",price:"$80,000–$95,000",desc:"An uncompromising performance coupe with sharp responses and serious track capability.",highlights:"Wide track, expressive grille, aerodynamic bodywork, M-specific cockpit, and sport seats.",tag:"Precision at every turn.",img:"https://images.unsplash.com/photo-1552519507-88aa2dfa9fdb?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW 520i",series:"5 Series",body:"Sedan",fuel:"Hybrid",power:"208 hp",hp:208,accel:"7.5 s",speed:"230 km/h",engine:"2.0L turbo petrol with 48V mild-hybrid",price:"$58,000–$70,000",desc:"A sophisticated executive sedan designed for relaxed long-distance travel and modern connectivity.",highlights:"Elegant proportions, ambient lighting, high-resolution curved display, and spacious rear seating.",tag:"Business class, redefined.",img:"https://images.unsplash.com/photo-1504215680853-026ed2a45def?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW M5",series:"M Series",body:"Sedan",fuel:"Hybrid",power:"717 hp",hp:717,accel:"3.5 s",speed:"250 km/h",engine:"Plug-in hybrid V8, twin-turbo + electric motor",price:"$120,000–$145,000",desc:"A high-performance luxury sedan combining electrified torque with formidable M power.",highlights:"Bold M styling, wide body, premium leather options, performance displays, and configurable drive settings.",tag:"Luxury with a pulse.",img:"https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW  i5 M60",series:"i Series",body:"Sedan",fuel:"Electric",power:"593 hp",hp:593,accel:"3.8 s",speed:"230 km/h",engine:"Dual-motor all-electric AWD",price:"$85,000–$100,000",desc:"An all-electric executive sedan with immediate response, long-distance comfort, and modern tech.",highlights:"Clean electric design cues, illuminated details, premium cabin materials, and advanced driver displays.",tag:"Executive, electrified.",img:"https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW 740i",series:"7 Series",body:"Sedan",fuel:"Hybrid",power:"375 hp",hp:375,accel:"5.2 s",speed:"250 km/h",engine:"3.0L turbo inline-6 with 48V mild-hybrid",price:"$98,000–$115,000",desc:"Flagship comfort, refined performance, and advanced technology for driver or passenger.",highlights:"Statement grille, available rear-seat theatre screen, ambient lighting, and lounge-like rear seating.",tag:"First-class comfort.",img:"https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW M850i xDrive",series:"8 Series",body:"Coupe",fuel:"Petrol",power:"523 hp",hp:523,accel:"3.7 s",speed:"250 km/h",engine:"4.4L twin-turbo V8",price:"$105,000–$125,000",desc:"A grand touring coupe that pairs effortless V8 power with long-distance refinement.",highlights:"Low sweeping roofline, elegant lighting, rich upholstery, and a cockpit built around the driver.",tag:"Grand touring, elevated.",img:"https://images.unsplash.com/photo-1614200187524-dc4b892acf16?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW X1 sDrive18i",series:"X Series",body:"SUV",fuel:"Petrol",power:"136 hp",hp:136,accel:"9.2 s",speed:"208 km/h",engine:"1.5L turbo petrol, 3-cylinder",price:"$40,000–$48,000",desc:"A compact Sports Activity Vehicle with a flexible cabin and confident everyday usability.",highlights:"Upright stance, bold body cladding, versatile cargo space, and a modern curved display.",tag:"Small footprint. Big utility.",img:"https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW X3 xDrive30i",series:"X Series",body:"SUV",fuel:"Petrol",power:"255 hp",hp:255,accel:"6.0 s",speed:"210 km/h",engine:"2.0L turbo petrol, 4-cylinder",price:"$50,000–$62,000",desc:"A versatile premium SUV that balances responsive driving with family-friendly space.",highlights:"Confident proportions, useful cargo room, elevated driving position, and a thoughtfully arranged cabin.",tag:"Ready for every day.",img:"https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW X5 xDrive40i",series:"X Series",body:"SUV",fuel:"Hybrid",power:"375 hp",hp:375,accel:"5.4 s",speed:"243 km/h",engine:"3.0L turbo inline-6 with 48V mild-hybrid",price:"$68,000–$82,000",desc:"A premium all-rounder with strong road presence, flexible space, and refined long-distance comfort.",highlights:"Sculpted SUV profile, upscale materials, adaptable cargo area, and advanced infotainment.",tag:"Confident by nature.",img:"https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW X5 xDrive50e",series:"X Series",body:"SUV",fuel:"Hybrid",power:"483 hp",hp:483,accel:"4.6 s",speed:"250 km/h",engine:"Plug-in hybrid inline-6 + electric motor",price:"$73,000–$88,000",desc:"Plug-in hybrid power adds electric driving capability to the popular luxury SUV formula.",highlights:"Distinctive kidney grille, premium seating, flexible luggage space, and selectable hybrid modes.",tag:"Power with flexibility.",img:"https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW X6 M Competition",series:"M Series",body:"SUV",fuel:"Petrol",power:"617 hp",hp:617,accel:"3.8 s",speed:"250 km/h",engine:"4.4L twin-turbo V8",price:"$125,000–$150,000",desc:"A muscular M SUV with coupe-inspired styling and immense V8 performance.",highlights:"Sloping roofline, aggressive M aero details, large performance brakes, and premium sport interior.",tag:"Bold looks. Big power.",img:"https://images.unsplash.com/photo-1519682337058-a94d519337bc?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW X7 xDrive40i",series:"X Series",body:"SUV",fuel:"Hybrid",power:"375 hp",hp:375,accel:"5.8 s",speed:"250 km/h",engine:"3.0L turbo inline-6 with 48V mild-hybrid",price:"$82,000–$100,000",desc:"A full-size luxury SAV with three-row versatility and a calm, commanding ride.",highlights:"Large grille, three-row cabin, premium ambient lighting, and generous passenger space.",tag:"Space for the extraordinary.",img:"https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW Z4 sDrive30i",series:"Z Series",body:"Convertible",fuel:"Petrol",power:"255 hp",hp:255,accel:"5.2 s",speed:"250 km/h",engine:"2.0L turbo petrol, 4-cylinder",price:"$53,000–$64,000",desc:"A classic roadster experience with open-top freedom and rear-wheel-drive balance.",highlights:"Long bonnet, compact soft top, low seating position, and a cockpit designed around the driver.",tag:"Open-air exhilaration.",img:"https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW i4 eDrive40",series:"i Series",body:"Gran Coupe",fuel:"Electric",power:"335 hp",hp:335,accel:"5.6 s",speed:"190 km/h",engine:"Single-motor all-electric, rear-wheel drive",price:"$55,000–$67,000",desc:"An all-electric Gran Coupe that brings familiar BMW driving dynamics to electric mobility.",highlights:"Streamlined four-door coupe shape, clean interior, regenerative braking, and responsive acceleration.",tag:"Electric, with a driver’s edge.",img:"https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW i4 M50",series:"i Series",body:"Gran Coupe",fuel:"Electric",power:"536 hp",hp:536,accel:"3.7 s",speed:"225 km/h",engine:"Dual-motor all-electric AWD",price:"$68,000–$78,000",desc:"Dual-motor electric performance wrapped in a practical, sleek Gran Coupe body.",highlights:"M-inspired bumpers, athletic stance, quick electric response, and a focused digital cockpit.",tag:"M thrill, electric soul.",img:"https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW i5 eDrive40",series:"i Series",body:"Sedan",fuel:"Electric",power:"335 hp",hp:335,accel:"6.0 s",speed:"193 km/h",engine:"Single-motor all-electric, rear-wheel drive",price:"$67,000–$78,000",desc:"A premium electric sedan focused on smooth power delivery and everyday comfort.",highlights:"Modern sedan proportions, ambient cabin lighting, advanced displays, and a quiet ride.",tag:"Business, without the tailpipe.",img:"https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW i7 xDrive60",series:"i Series",body:"Sedan",fuel:"Electric",power:"536 hp",hp:536,accel:"4.5 s",speed:"240 km/h",engine:"Dual-motor all-electric AWD",price:"$105,000–$125,000",desc:"The electric flagship brings serene acceleration and limousine-level comfort to the 7 Series experience.",highlights:"Illuminated grille, spacious rear cabin, premium sound options, and available rear entertainment screen.",tag:"Flagship, fully electric.",img:"https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW iX xDrive50",series:"i Series",body:"SUV",fuel:"Electric",power:"516 hp",hp:516,accel:"4.6 s",speed:"200 km/h",engine:"Dual-motor all-electric AWD",price:"$85,000–$100,000",desc:"A purpose-built electric luxury SAV with a spacious cabin and confident all-weather traction.",highlights:"Distinctive sculptural exterior, airy cabin, sustainable material options, and advanced driver assistance.",tag:"Electric space to explore.",img:"https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW iX M60",series:"i Series",body:"SUV",fuel:"Electric",power:"610 hp",hp:610,accel:"3.8 s",speed:"250 km/h",engine:"Dual-motor all-electric AWD",price:"$105,000–$125,000",desc:"The high-performance iX pairs muscular electric acceleration with spacious luxury.",highlights:"M-inspired detailing, broad stance, premium materials, and responsive dual-motor power delivery.",tag:"Electrified M presence.",img:"https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW M4 Convertible",series:"M Series",body:"Convertible",fuel:"Petrol",power:"503 hp",hp:503,accel:"3.7 s",speed:"250 km/h",engine:"3.0L twin-turbo inline-6",price:"$88,000–$102,000",desc:"High-performance M engineering with the added drama of open-air driving.",highlights:"Aggressive M bodywork, retractable soft top, supportive front seats, and performance-focused controls.",tag:"Performance, roof optional.",img:"https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW 840i Convertible",series:"8 Series",body:"Convertible",fuel:"Petrol",power:"335 hp",hp:335,accel:"5.0 s",speed:"250 km/h",engine:"3.0L turbo inline-6",price:"$95,000–$112,000",desc:"A refined open-top grand tourer for relaxed high-speed cruising and special occasions.",highlights:"Elegant long bonnet, flowing bodywork, luxury upholstery, and a power-operated soft top.",tag:"Grand touring in the open.",img:"https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW 630i Gran Turismo",series:"6 Series",body:"Wagon",fuel:"Petrol",power:"258 hp",hp:258,accel:"6.3 s",speed:"250 km/h",engine:"2.0L turbo petrol, 4-cylinder",price:"$62,000–$75,000",desc:"A discontinued/market-dependent model example blending long-roof practicality with grand touring comfort.",highlights:"Sleek roofline, generous luggage area, comfortable seats, and a refined highway character.",tag:"Grand touring practicality.",img:"https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW 218i Gran Coupe",series:"2 Series",body:"Gran Coupe",fuel:"Petrol",power:"140 hp",hp:140,accel:"8.7 s",speed:"215 km/h",engine:"1.5L turbo petrol, 3-cylinder",price:"$38,000–$47,000",desc:"A stylish entry point to the four-door coupe look with compact dimensions and everyday ease.",highlights:"Sloping roofline, frameless-style visual cues, LED lighting, and contemporary cabin technology.",tag:"Your first BMW feeling.",img:"https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW X2 M35i",series:"X Series",body:"SUV",fuel:"Petrol",power:"312 hp",hp:312,accel:"5.2 s",speed:"250 km/h",engine:"2.0L turbo petrol, 4-cylinder",price:"$52,000–$62,000",desc:"A sporty compact SAV with coupe-like styling and punchy turbocharged performance.",highlights:"Sloping roof, athletic body kit, sport seats, and M-inspired exterior accents.",tag:"City size. Sporty spirit.",img:"https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1000&q=80"},
+ {name:"BMW X3 M Competition",series:"M Series",body:"SUV",fuel:"Petrol",power:"503 hp",hp:503,accel:"3.8 s",speed:"250 km/h",engine:"3.0L twin-turbo inline-6",price:"$78,000–$92,000",desc:"A high-output performance SUV with sharp handling and everyday cargo versatility.",highlights:"M-specific grille and aero, wide wheels, performance brakes, and a cockpit with sport-focused controls.",tag:"Versatility, turned up.",img:"https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?auto=format&fit=crop&w=1000&q=80"}
+];
+
+
+// Curated, model-relevant photographs. Most are direct Wikimedia Commons image files;
+// other direct image URLs are from automotive press/publisher galleries. These load online.
+const modelImageOverrides = {
+  "BMW 118i": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/BMW_1-Series_%28F40%29_118i_%282020%29_%2852183243817%29.jpg/1280px-BMW_1-Series_%28F40%29_118i_%282020%29_%2852183243817%29.jpg",
+  "BMW M135 xDrive": "https://s3.paultan.org/image/2019/07/F40-BMW-1-Series-M135i-xDrive-intl-media-launch-14-BM.jpg",
+  "BMW 220i Coupe": "https://www.topgear.com/sites/default/files/2025/07/P90601547_highRes_bmw-230i-coupe.jpg",
+  "BMW M2": "https://assets.adac.de/image/upload/ar_16%3A9%2Cc_fill%2Cf_auto%2Cg_auto%2Cq_auto%3Aeco%2Cw_1256/v1/Autodatenbank/Fahrzeugbilder/im06619-0-bmw-2er-reihe.jpeg",
+  "BMW 320i": "https://upload.wikimedia.org/wikipedia/commons/8/8d/BMW_G20_IMG_0167.jpg",
+  "BMW M3 Competition": "https://upload.wikimedia.org/wikipedia/commons/1/16/BMW_G80_M3_Competition_M_xDrive_Black_Sapphire_Metallic_%282%29.jpg",
+  "BMW 330e": "https://upload.wikimedia.org/wikipedia/commons/8/8d/BMW_G20_IMG_0167.jpg",
+  "BMW 420i Gran Coupe": "https://upload.wikimedia.org/wikipedia/commons/c/cd/2024_BMW_4_Series_Gran_Coup%C3%A9_%28G26%29_IMG_2400.jpg",
+  "BMW M4 Competition": "https://upload.wikimedia.org/wikipedia/commons/7/79/BMW_M4_%28G82%29_1X7A0155.jpg",
+  "BMW 520i": "https://images.autoweek.nl/261158743/width/1200/261158743",
+  "BMW M5": "https://images.pistonheads.com/nimg/49318/mceu_77217533161734103774234.jpg",
+  "BMW  i5 M60": "https://paultan.org/cn/image/2023/05/P90505000_highRes_the-new-bmw-i5-edriv-e1685069716398.jpg",
+  "BMW 740i": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/BMW_G70_740i_sDrive_M_Sport_Black_Sapphire_Metallic_%2876%29.jpg/1280px-BMW_G70_740i_sDrive_M_Sport_Black_Sapphire_Metallic_%2876%29.jpg",
+  "BMW M850i xDrive": "https://images.clickdealer.co.uk/vehicles/7352/7352459/large2/185828664.jpg",
+  "BMW X1 sDrive18i": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/BMW_U11_1X7A6471.jpg/1280px-BMW_U11_1X7A6471.jpg",
+  "BMW X3 xDrive30i": "https://upload.wikimedia.org/wikipedia/commons/5/5d/2018_BMW_X3_%28G01%29_xDrive30i_wagon_%282018-11-02%29_01.jpg",
+  "BMW X5 xDrive40i": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/BMW_G05_IMG_4073.jpg/1280px-BMW_G05_IMG_4073.jpg",
+  "BMW X5 xDrive50e": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/BMW_G05_IMG_4073.jpg/1280px-BMW_G05_IMG_4073.jpg",
+  "BMW X6 M Competition": "https://images.carexpert.com.au/resize/960/-/cms/v1/media/2020-05-3-design-expose-bmw-x6-m-g06-main.jpg",
+  "BMW X7 xDrive40i": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/BMW_G07_IMG_4977.jpg/1280px-BMW_G07_IMG_4977.jpg",
+  "BMW Z4 sDrive30i": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/BMW_G29_Z4_M40i_%28Facelift%29_1X7A6946-with-less-seller-info.jpg/1280px-BMW_G29_Z4_M40i_%28Facelift%29_1X7A6946-with-less-seller-info.jpg",
+  "BMW i4 eDrive40": "https://img.gfx.no/2661/2661613/P90416000_highRes_first-view-on-the-up.jpg",
+  "BMW i4 M50": "https://www.motorlegend.com/modules/breve/photos/src/bmw-i4-22634-4.jpg",
+  "BMW i5 eDrive40": "https://paultan.org/cn/image/2023/05/P90505000_highRes_the-new-bmw-i5-edriv-e1685069716398.jpg",
+  "BMW i7 xDrive60": "https://i.blogs.es/b1b6bb/p90458171_lowres_the-new-bmw-i7-xdriv/1200_900.jpeg",
+  "BMW iX xDrive50": "https://upload.wikimedia.org/wikipedia/commons/b/b2/BMW_iX_IAA_2021_1X7A0204.jpg",
+  "BMW iX M60": "https://upload.wikimedia.org/wikipedia/commons/b/b2/BMW_iX_IAA_2021_1X7A0204.jpg",
+  "BMW M4 Convertible": "https://paultan.org/image/2021/05/G83-BMW-M4-Competition-Convertible-with-xDrive-debut-28.jpg",
+  "BMW 840i Convertible": "https://carsales.pxcrush.net/carsales/cars/dealer/8wia752qwand65jxvffh6269n.jpg?pxc_format=jpeg&pxc_method=crop&pxc_size=1200%2C630",
+  "BMW 630i Gran Turismo": "https://paultan.org/image/2021/05/2021-G32-BMW-630i-GT-M-Sport-LCI-Malaysia-launch-official-1-BM.jpg",
+  "BMW 218i Gran Coupe": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/BMW_F44_IMG_6269.jpg/1280px-BMW_F44_IMG_6269.jpg",
+  "BMW X2 M35i": "https://cdn.motor1.com/images/mgl/pb3Beg/s1/bmw-x2-m35i-xdrive-no-brasil.jpg",
+  "BMW X3 M Competition": "https://upload.wikimedia.org/wikipedia/commons/5/5d/2018_BMW_X3_%28G01%29_xDrive30i_wagon_%282018-11-02%29_01.jpg"
+};
+cars.forEach(car => {
+  if (modelImageOverrides[car.name]) car.img = modelImageOverrides[car.name];
+});
+
+const grid = document.getElementById('carGrid');
+const searchInput = document.getElementById('searchInput');
+const seriesFilter = document.getElementById('seriesFilter');
+const bodyFilter = document.getElementById('bodyFilter');
+const resultCount = document.getElementById('resultCount');
+const emptyState = document.getElementById('emptyState');
+const modal = document.getElementById('detailModal');
+
+// If an external image is unavailable, show a deliberate placeholder rather than a different car.
+grid.addEventListener('error', event => {
+  const image = event.target;
+  if (!(image instanceof HTMLImageElement) || image.dataset.carImage !== 'true') return;
+  const fallback = document.createElement('div');
+  fallback.className = 'car-image-fallback';
+  fallback.setAttribute('role', 'img');
+  fallback.setAttribute('aria-label', `${image.alt} photo unavailable`);
+  fallback.innerHTML = `<span>BMW EXPLORER</span><strong>${escapeHtml(image.alt)}</strong><small>Photo temporarily unavailable</small>`;
+  image.replaceWith(fallback);
+}, true);
+
+let activeFuel = 'All';
+let lastFocused = null;
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+}
+function carCard(car, index) {
+  const safeName = escapeHtml(car.name);
+  return `
+    <article class="car-card">
+      <div class="car-image">
+        <img src="${escapeHtml(car.img)}" alt="${safeName}" loading="lazy" data-car-image="true" referrerpolicy="no-referrer">
+        <span class="absolute top-3 left-3 pill">${escapeHtml(car.series)}</span>
+        <span class="absolute top-3 right-3 pill">${escapeHtml(car.fuel)}</span>
+      </div>
+      <div class="p-5">
+        <p class="text-xs text-blue-300 uppercase tracking-widest mb-2">${escapeHtml(car.body)}</p>
+        <h3 class="text-xl font-bold tracking-tight">${safeName}</h3>
+        <p class="text-sm text-slate-400 mt-2 min-h-[40px]">${escapeHtml(car.tag)}</p>
+        <div class="grid grid-cols-3 gap-3 mt-5 mb-5">
+          <div><div class="text-lg font-bold">${escapeHtml(car.power)}</div><div class="text-[11px] text-slate-500 mt-1">POWER</div></div>
+          <div><div class="text-lg font-bold">${escapeHtml(car.accel)}</div><div class="text-[11px] text-slate-500 mt-1">0–100 km/h</div></div>
+          <div><div class="text-lg font-bold">${escapeHtml(car.speed.split(' ')[0])}</div><div class="text-[11px] text-slate-500 mt-1">km/h max</div></div>
+        </div>
+        <div class="flex items-center justify-between gap-3 pt-4 border-t border-slate-800">
+          <span class="text-xs text-slate-400">${escapeHtml(car.engine.split(',')[0])}</span>
+          <button class="blue-btn rounded-lg px-3 py-2 text-sm font-bold shrink-0" data-details="${index}" aria-label="View details for ${safeName}">Details ↗</button>
+        </div>
+      </div>
+    </article>`;
+}
+function getFilteredCars() {
+  const query = searchInput.value.trim().toLowerCase();
+  return cars.map((car, index) => ({car, index})).filter(({car}) => {
+    const text = [car.name, car.series, car.body, car.fuel, car.engine, car.desc].join(' ').toLowerCase();
+    return (!query || text.includes(query))
+      && (seriesFilter.value === 'All' || car.series === seriesFilter.value)
+      && (bodyFilter.value === 'All' || car.body === bodyFilter.value)
+      && (activeFuel === 'All' || car.fuel === activeFuel);
+  });
+}
+function renderCars() {
+  const filtered = getFilteredCars();
+  grid.innerHTML = filtered.map(({car,index}) => carCard(car,index)).join('');
+  resultCount.textContent = filtered.length;
+  emptyState.classList.toggle('hidden', filtered.length !== 0);
+  grid.classList.toggle('hidden', filtered.length === 0);
+}
+function showDetails(index) {
+  const car = cars[index];
+  if (!car) return;
+  lastFocused = document.activeElement;
+  const modalImage = document.getElementById('modalImage');
+  modalImage.style.opacity = '1';
+  modalImage.onerror = () => { modalImage.style.opacity = '0'; };
+  modalImage.src = car.img;
+  modalImage.alt = car.name;
+  document.getElementById('modalSeries').textContent = `${car.series} · ${car.body}`;
+  document.getElementById('modalTitle').textContent = car.name;
+  document.getElementById('modalTagline').textContent = car.tag;
+  document.getElementById('modalPower').textContent = car.power;
+  document.getElementById('modalAccel').textContent = car.accel;
+  document.getElementById('modalSpeed').textContent = car.speed;
+  document.getElementById('modalFuel').textContent = car.fuel;
+  document.getElementById('modalDescription').textContent = car.desc;
+  document.getElementById('modalHighlights').textContent = car.highlights;
+  document.getElementById('modalPrice').textContent = car.price;
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('closeModal').focus();
+}
+function closeDetails() {
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+  if (lastFocused) lastFocused.focus();
+}
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.style.display = 'block';
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => toast.style.display = 'none', 2400);
+}
+
+[searchInput, seriesFilter, bodyFilter].forEach(el => {
+  el.addEventListener(el === searchInput ? 'input' : 'change', renderCars);
+});
+document.getElementById('fuelChips').addEventListener('click', event => {
+  const button = event.target.closest('[data-fuel]');
+  if (!button) return;
+  activeFuel = button.dataset.fuel;
+  document.querySelectorAll('[data-fuel]').forEach(chip => chip.classList.toggle('active', chip === button));
+  renderCars();
+});
+document.getElementById('resetFilters').addEventListener('click', () => {
+  searchInput.value = '';
+  seriesFilter.value = 'All';
+  bodyFilter.value = 'All';
+  activeFuel = 'All';
+  document.querySelectorAll('[data-fuel]').forEach(chip => chip.classList.toggle('active', chip.dataset.fuel === 'All'));
+  renderCars();
+});
+grid.addEventListener('click', event => {
+  const button = event.target.closest('[data-details]');
+  if (button) showDetails(Number(button.dataset.details));
+});
+document.getElementById('closeModal').addEventListener('click', closeDetails);
+modal.addEventListener('click', event => { if (event.target === modal) closeDetails(); });
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && modal.classList.contains('open')) closeDetails();
+  // Keep keyboard focus inside the open modal.
+  if (event.key === 'Tab' && modal.classList.contains('open')) {
+    const focusable = [...modal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')].filter(el => !el.disabled);
+    const first = focusable[0], last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+  }
+});
+document.querySelectorAll('[data-preset]').forEach(link => link.addEventListener('click', () => {
+  const preset = link.dataset.preset;
+  setTimeout(() => {
+    if (preset === 'Electric') {
+      activeFuel = 'Electric';
+      document.querySelectorAll('[data-fuel]').forEach(chip => chip.classList.toggle('active', chip.dataset.fuel === 'Electric'));
+    } else {
+      seriesFilter.value = 'M Series';
+    }
+    renderCars();
+  }, 0);
+}));
+document.getElementById('showElectric').addEventListener('click', () => {
+  activeFuel = 'Electric';
+  document.querySelectorAll('[data-fuel]').forEach(chip => chip.classList.toggle('active', chip.dataset.fuel === 'Electric'));
+  renderCars();
+  document.getElementById('models').scrollIntoView({behavior:'smooth'});
+});
+renderCars();
+</script>
+</body>
+</html>
